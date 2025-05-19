@@ -1,3 +1,5 @@
+#include <argp.h>
+
 #include <format>
 #include <iostream>
 #include <random>
@@ -6,11 +8,64 @@
 #include <ale/ale_interface.hpp>
 //#include <ale/games/supported/SpaceInvaders.hpp>
 
-int main(void)
+const char *argp_program_version = "Version 0.1";
+const char *argp_program_bug_address = "w@wltjr.com";
+
+// command line arguments
+struct args
+{
+    bool display;
+    bool sound;
+    int episodes;
+};
+
+// help menu
+static struct argp_option options[] = {
+    {0,0,0,0,"Optional arguments:",1},
+    {"display",'d',0,0," Enable display on screen ",1},
+    {"sound",'s',0,0," Enable sound ",1},
+    {"episodes",'e',"10",0," Number of episodes default 10 ",1},
+    {0,0,0,0,"GNU Options:", 2},
+    {0,0,0,0,0,0}
+};
+
+/**
+ * Parse command line options
+ *
+ * @key the integer key provided by the current option to the option parser.
+ * @arg the name of an argument associated with this option
+ * @state points to a struct argp_state
+ *
+ * @return ARGP_ERR_UNKNOWN for any key value not recognize
+ */
+static error_t parse_opt(int key, char *arg, struct argp_state *state) {
+
+    struct args *args = (struct args*)state->input;
+
+    switch(key) {
+        case 'd':
+            args->display = true;
+            break;
+        case 'e':
+            args->episodes = arg ? atoi (arg) : 10;
+            break;
+        case 's':
+            args->sound = true;
+            break;
+        default:
+            return ARGP_ERR_UNKNOWN;
+    }
+    return(0);
+}
+
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+static struct argp argp	 =  { options, parse_opt };
+
+int main(int argc, char* argv[])
 {
     const int ACTIONS = 6;
-    int episodes;
     int total_reward;
+    struct args args;
     std::vector<int> q_table;
 
     ale::ALEInterface ale;
@@ -20,13 +75,23 @@ int main(void)
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> rand_action(0,ACTIONS);
 
+    // default arguments
+    args.display = false;
+    args.sound = false;
+    args.episodes = 10;
+
+    // parse command line options
+    argp_parse (&argp, argc, argv, 0, 0, &args);
+
+    // initialize game
     ale.setInt("random_seed", 123);
+    ale.setBool("display_screen", args.display);
+    ale.setBool("sound", args.sound);
     ale.loadROM("space_invaders.bin");
 
     legal_actions = ale.getLegalActionSet();
 
-    episodes = 10;
-    for(int i = 0; i < episodes ;i++)
+    for(int i = 0; i < args.episodes ;i++)
     {
         total_reward = 0;
 
