@@ -70,7 +70,6 @@ static struct argp argp	 =  { options, parse_opt };
 int main(int argc, char* argv[])
 {
     const int ACTIONS = 6;
-    int total_reward;
     float alpha;
     float gamma;
     float epsilon;
@@ -116,12 +115,14 @@ int main(int argc, char* argv[])
 
     for(int i = 0; i < args.episodes ;i++)
     {
+        ale::reward_t total_reward;
+
         total_reward = 0;
 
         while(!ale.game_over())
         {
             int next_q_value;
-            float reward;
+            ale::reward_t reward;
             std::vector<unsigned char> rgb;
             std::vector<int>::iterator max;
             ale::Action a;
