@@ -1,5 +1,6 @@
 #include <argp.h>
 
+#include <algorithm>
 #include <format>
 #include <iostream>
 #include <random>
@@ -65,15 +66,23 @@ int main(int argc, char* argv[])
 {
     const int ACTIONS = 6;
     int total_reward;
+    float alpha;
+    float gamma;
+    float epsilon;
+    float epsilon_min;
+    float epsilon_decay;
     struct args args;
     std::vector<int> q_table;
 
+    // initialize Arcade Learning Environment
     ale::ALEInterface ale;
     ale::ActionVect legal_actions;
 
+    // initialize random device
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> rand_action(0,ACTIONS);
+    std::uniform_real_distribution<> rand_epsilon(0.0,1.0);
 
     // default arguments
     args.display = false;
@@ -90,6 +99,14 @@ int main(int argc, char* argv[])
     ale.loadROM("space_invaders.bin");
 
     legal_actions = ale.getLegalActionSet();
+    q_table.resize(ACTIONS, 0);
+
+    // q-learning parameters
+    alpha = 0.2;                // learning rate
+    gamma = 0.96;               // discount factor
+    epsilon = 1.0;              // exploration rate (starting value)
+    epsilon_min = 0.1;          // minimum exploration rate
+    epsilon_decay = 0.995;      // decay rate for exploration
 
     for(int i = 0; i < args.episodes ;i++)
     {
@@ -97,14 +114,34 @@ int main(int argc, char* argv[])
 
         while(!ale.game_over())
         {
+            int next_q_value;
             float reward;
             std::vector<unsigned char> rgb;
+            std::vector<int>::iterator max;
             ale::Action a;
 
-            a = legal_actions[rand_action(gen)];
-            reward = ale.act(a);
+            // current state (used?)
             ale.getScreenRGB(rgb);
+
+            if(rand_epsilon(gen) < epsilon)
+                a = legal_actions[rand_action(gen)];
+            else
+            {
+                max = std::max_element(q_table.begin(), q_table.end());
+                a = legal_actions[std::distance(q_table.begin(), max)];
+            }
+
+            // take action & collect reward
+            reward = ale.act(a);
             total_reward += reward;
+
+            // update q-value
+            max = std::max_element(q_table.begin(), q_table.end());
+            next_q_value = legal_actions[std::distance(q_table.begin(), max)];
+            q_table[a] += alpha * (reward + gamma * next_q_value - q_table[a]);
+
+            // decay epsilon
+            epsilon = std::max(epsilon_min, epsilon * epsilon_decay);
         }
 
         ale.saveScreenPNG(std::format("episode-{}.png", i));
