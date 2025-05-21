@@ -70,6 +70,8 @@ static struct argp argp	 =  { options, parse_opt };
 int main(int argc, char* argv[])
 {
     const int ACTIONS = 6;
+    int max_episode;
+    ale::reward_t max_score;
     float alpha;
     float gamma;
     float epsilon;
@@ -113,6 +115,9 @@ int main(int argc, char* argv[])
     epsilon_min = 0.1;          // minimum exploration rate
     epsilon_decay = 0.995;      // decay rate for exploration
 
+    max_episode = -1;
+    max_score = -1;
+
     for(int i = 0; i < args.episodes ;i++)
     {
         ale::reward_t total_reward;
@@ -151,6 +156,13 @@ int main(int argc, char* argv[])
             epsilon = std::max(epsilon_min, epsilon * epsilon_decay);
         }
 
+        // track max episode & score
+        if(total_reward > max_score)
+        {
+            max_episode = i;
+            max_score = total_reward;
+        }
+
         // save final episode results to file
         if(args.png)
             ale.saveScreenPNG(std::format("episode-{}.png", i));
@@ -159,6 +171,8 @@ int main(int argc, char* argv[])
                   << std::endl;
         ale.reset_game();
     }
+    std::cout << std::format("Episode {} max score: {}", max_episode, max_score)
+                << std::endl;
 
     return 0;
 }
