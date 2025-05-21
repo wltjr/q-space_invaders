@@ -17,15 +17,17 @@ struct args
 {
     bool display;
     bool sound;
+    bool png;
     int episodes;
 };
 
 // help menu
 static struct argp_option options[] = {
     {0,0,0,0,"Optional arguments:",1},
+    {"episodes",'e',"10",0," Number of episodes default 10 ",1},
     {"display",'d',0,0," Enable display on screen ",1},
     {"sound",'s',0,0," Enable sound ",1},
-    {"episodes",'e',"10",0," Number of episodes default 10 ",1},
+    {"png",'p',0,0," Enable saving a PNG image per episode ",1},
     {0,0,0,0,"GNU Options:", 2},
     {0,0,0,0,0,0}
 };
@@ -49,6 +51,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             break;
         case 'e':
             args->episodes = arg ? atoi (arg) : 10;
+            break;
+        case 'p':
+            args->png = true;
             break;
         case 's':
             args->sound = true;
@@ -85,9 +90,10 @@ int main(int argc, char* argv[])
     std::uniform_real_distribution<> rand_epsilon(0.0,1.0);
 
     // default arguments
+    args.episodes = 10;
     args.display = false;
     args.sound = false;
-    args.episodes = 10;
+    args.png = false;
 
     // parse command line options
     argp_parse (&argp, argc, argv, 0, 0, &args);
@@ -144,7 +150,10 @@ int main(int argc, char* argv[])
             epsilon = std::max(epsilon_min, epsilon * epsilon_decay);
         }
 
-        ale.saveScreenPNG(std::format("episode-{}.png", i));
+        // save final episode results to file
+        if(args.png)
+            ale.saveScreenPNG(std::format("episode-{}.png", i));
+
         std::cout << std::format("Episode {} score: {}", i, total_reward)
                   << std::endl;
         ale.reset_game();
