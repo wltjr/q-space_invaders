@@ -71,6 +71,8 @@ static struct argp argp	 =  { options, parse_opt };
 int main(int argc, char* argv[])
 {
     const int ACTIONS = 6;
+    const int HEIGHT = 210;
+    const int WIDTH = 160;
     int max_episode;
     ale::reward_t max_score;
     float alpha;
@@ -138,9 +140,11 @@ int main(int argc, char* argv[])
             std::vector<unsigned char> screen;
             std::vector<int>::iterator max;
             ale::Action a;
+            cv::Mat orig;
 
-            // current state
+            // current state (used?)
             ale.getScreenGrayscale(screen);
+            orig = cv::Mat(HEIGHT, WIDTH, CV_8UC1, &screen[0]);
 
             if(rand_epsilon(gen) < epsilon)
                 a = legal_actions[rand_action(gen)];
