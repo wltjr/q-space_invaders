@@ -8,6 +8,7 @@
 
 #include <ale/ale_interface.hpp>
 //#include <ale/games/supported/SpaceInvaders.hpp>
+#include <opencv4/opencv2/opencv.hpp>
 
 const char *argp_program_version = "Version 0.1";
 const char *argp_program_bug_address = "w@wltjr.com";
@@ -84,6 +85,9 @@ int main(int argc, char* argv[])
     ale::ALEInterface ale;
     ale::ActionVect legal_actions;
 
+    // opencv
+    cv::Mat cannon;
+
     // initialize random device
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -107,6 +111,9 @@ int main(int argc, char* argv[])
 
     legal_actions = ale.getLegalActionSet();
     q_table.resize(ACTIONS, 0);
+
+    // load opencv template images
+    cv::cvtColor(cv::imread("templates/cannon.png"), cannon, cv::COLOR_RGB2GRAY);
 
     // q-learning parameters
     alpha = 0.2;                // learning rate
