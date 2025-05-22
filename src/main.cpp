@@ -135,12 +135,12 @@ int main(int argc, char* argv[])
         {
             int next_q_value;
             ale::reward_t reward;
-            std::vector<unsigned char> rgb;
+            std::vector<unsigned char> screen;
             std::vector<int>::iterator max;
             ale::Action a;
 
-            // current state (used?)
-            ale.getScreenRGB(rgb);
+            // current state
+            ale.getScreenGrayscale(screen);
 
             if(rand_epsilon(gen) < epsilon)
                 a = legal_actions[rand_action(gen)];
