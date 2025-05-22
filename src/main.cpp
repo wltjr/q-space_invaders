@@ -141,10 +141,13 @@ int main(int argc, char* argv[])
             std::vector<int>::iterator max;
             ale::Action a;
             cv::Mat orig;
+            cv::Mat result;
 
             // current state (used?)
             ale.getScreenGrayscale(screen);
             orig = cv::Mat(HEIGHT, WIDTH, CV_8UC1, &screen[0]);
+            result.create(HEIGHT, WIDTH, CV_8UC1);
+            cv::matchTemplate(orig, cannon, result, cv::TM_CCOEFF_NORMED);
 
             if(rand_epsilon(gen) < epsilon)
                 a = legal_actions[rand_action(gen)];
