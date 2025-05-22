@@ -148,6 +148,7 @@ int main(int argc, char* argv[])
             orig = cv::Mat(HEIGHT, WIDTH, CV_8UC1, &screen[0]);
             result.create(HEIGHT, WIDTH, CV_8UC1);
             cv::matchTemplate(orig, cannon, result, cv::TM_CCOEFF_NORMED);
+            normalize( result, result, 0, 255, cv::NORM_MINMAX, CV_8UC1);
 
             if(rand_epsilon(gen) < epsilon)
                 a = legal_actions[rand_action(gen)];
