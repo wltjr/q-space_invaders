@@ -135,6 +135,7 @@ int main(int argc, char* argv[])
 
         while(!ale.game_over())
         {
+            int cannon_x;
             int next_q_value;
             double max_value;
             double min_value;
@@ -154,6 +155,8 @@ int main(int argc, char* argv[])
             cv::matchTemplate(orig, cannon, result, cv::TM_CCOEFF_NORMED);
             normalize( result, result, 0, 255, cv::NORM_MINMAX, CV_8UC1);
             cv::minMaxLoc(result, &min_value, &max_value, &min_location, &max_location);
+            // x center of cannon
+            cannon_x = max_location.x + (cannon.cols + 1) / 2;
 
             if(rand_epsilon(gen) < epsilon)
                 a = legal_actions[rand_action(gen)];
