@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
     float epsilon_min;
     float epsilon_decay;
     struct args args;
-    std::vector<int> q_table;
+    std::vector<std::vector<int>> q_table;
 
     // initialize Arcade Learning Environment
     ale::ALEInterface ale;
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
     ale.loadROM("space_invaders.bin");
 
     legal_actions = ale.getLegalActionSet();
-    q_table.resize(ACTIONS, 0);
+    q_table.resize(WIDTH, std::vector<int>(ACTIONS, 0));
 
     // load opencv template images
     cv::cvtColor(cv::imread("templates/cannon.png"), cannon, cv::COLOR_RGB2GRAY);
@@ -162,8 +162,8 @@ int main(int argc, char* argv[])
                 a = legal_actions[rand_action(gen)];
             else
             {
-                max = std::max_element(q_table.begin(), q_table.end());
-                a = legal_actions[std::distance(q_table.begin(), max)];
+                max = std::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
+                a = legal_actions[std::distance(q_table[cannon_x].begin(), max)];
             }
 
             // take action & collect reward
@@ -171,9 +171,9 @@ int main(int argc, char* argv[])
             total_reward += reward;
 
             // update q-value
-            max = std::max_element(q_table.begin(), q_table.end());
-            next_q_value = legal_actions[std::distance(q_table.begin(), max)];
-            q_table[a] += alpha * (reward + gamma * next_q_value - q_table[a]);
+            max = std::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
+            next_q_value = legal_actions[std::distance(q_table[cannon_x].begin(), max)];
+            q_table[cannon_x][a] += alpha * (reward + gamma * next_q_value - q_table[cannon_x][a]);
 
             // decay epsilon
             epsilon = std::max(epsilon_min, epsilon * epsilon_decay);
