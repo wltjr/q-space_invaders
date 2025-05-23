@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <ale/ale_interface.hpp>
-//#include <ale/games/supported/SpaceInvaders.hpp>
 #include <opencv4/opencv2/opencv.hpp>
 
 const char *argp_program_version = "Version 0.1";
