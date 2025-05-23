@@ -148,14 +148,17 @@ int main(int argc, char* argv[])
             cv::Point max_location;
             cv::Point min_location;
 
-            // current state (used?)
+            // prepare current game screen for opencv
             ale.getScreenGrayscale(screen);
             orig = cv::Mat(HEIGHT, WIDTH, CV_8UC1, &screen[0]);
+
+            // match cannon template in screen
             result.create(HEIGHT, WIDTH, CV_8UC1);
             cv::matchTemplate(orig, cannon, result, cv::TM_CCOEFF_NORMED);
             normalize( result, result, 0, 255, cv::NORM_MINMAX, CV_8UC1);
+
+            // get cannon location
             cv::minMaxLoc(result, &min_value, &max_value, &min_location, &max_location);
-            // x center of cannon
             cannon_x = max_location.x + (cannon.cols + 1) / 2;
 
             if(rand_epsilon(gen) < epsilon)
