@@ -136,12 +136,16 @@ int main(int argc, char* argv[])
         while(!ale.game_over())
         {
             int next_q_value;
+            double max_value;
+            double min_value;
             ale::reward_t reward;
             std::vector<unsigned char> screen;
             std::vector<int>::iterator max;
             ale::Action a;
             cv::Mat orig;
             cv::Mat result;
+            cv::Point max_location;
+            cv::Point min_location;
 
             // current state (used?)
             ale.getScreenGrayscale(screen);
@@ -149,6 +153,7 @@ int main(int argc, char* argv[])
             result.create(HEIGHT, WIDTH, CV_8UC1);
             cv::matchTemplate(orig, cannon, result, cv::TM_CCOEFF_NORMED);
             normalize( result, result, 0, 255, cv::NORM_MINMAX, CV_8UC1);
+            cv::minMaxLoc(result, &min_value, &max_value, &min_location, &max_location);
 
             if(rand_epsilon(gen) < epsilon)
                 a = legal_actions[rand_action(gen)];
