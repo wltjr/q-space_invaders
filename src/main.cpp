@@ -15,7 +15,7 @@ const char *argp_program_bug_address = "w@wltjr.com";
 
 const char *CSV_FILE = "space_invaders_q_table.csv";
 
-const int ACTIONS = 6;
+const int ACTIONS = 4;
 const int HEIGHT = 210;
 const int WIDTH = 160;
 
