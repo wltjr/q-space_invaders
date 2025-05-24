@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <format>
+#include <fstream>
 #include <iostream>
 #include <random>
 #include <vector>
@@ -16,8 +17,9 @@ const char *argp_program_bug_address = "w@wltjr.com";
 struct args
 {
     bool display;
-    bool sound;
     bool png;
+    bool save;
+    bool sound;
     int episodes;
 };
 
@@ -28,6 +30,7 @@ static struct argp_option options[] = {
     {"display",'d',0,0," Enable display on screen ",1},
     {"episodes",'e',"10",0," Number of episodes default 10 ",1},
     {"png",'p',0,0," Enable saving a PNG image per episode ",1},
+    {"save",'s',0,0," Save the q-table to file ",1},
     {0,0,0,0,"GNU Options:", 2},
     {0,0,0,0,0,0}
 };
@@ -58,6 +61,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
         case 'p':
             args->png = true;
             break;
+        case 's':
+            args->save = true;
+            break;
         default:
             return ARGP_ERR_UNKNOWN;
     }
@@ -66,6 +72,35 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 static struct argp argp	 =  { options, parse_opt };
+
+
+/**
+ * @brief Save the q-table to csv file
+ * 
+ * @param q_table q-table of actions for each cannon_x value
+ */
+void save_q_table(std::vector<std::vector<int>> &q_table)
+{
+    const int COLS = 6;
+    const int WIDTH = 160;
+    std::ofstream file;
+
+    file.open ("space_invaders_q_table.csv");
+    file << "cannon_x,0-Noop,1-Fire,2-Right,3-Left,4-RightFire,5-LeftFire\n";
+    for(int r = 0; r < WIDTH; r++)
+    {
+        file << r << ",";
+        for(int c = 0; c < COLS;)
+        {
+            file << q_table[r][c];
+            if(c++ < COLS)
+                file << ",";
+        }
+        file << std::endl;
+    }
+    file.close();
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -100,6 +135,7 @@ int main(int argc, char* argv[])
     args.display = false;
     args.sound = false;
     args.png = false;
+    args.save = false;
 
     // parse command line options
     argp_parse (&argp, argc, argv, 0, 0, &args);
@@ -198,6 +234,9 @@ int main(int argc, char* argv[])
     }
     std::cout << std::format("Episode {} max score: {}", max_episode, max_score)
                 << std::endl;
+
+    if(args.save)
+        save_q_table(q_table);
 
     return 0;
 }
