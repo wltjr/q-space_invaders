@@ -15,6 +15,10 @@ const char *argp_program_bug_address = "w@wltjr.com";
 
 const char *CSV_FILE = "space_invaders_q_table.csv";
 
+const int ACTIONS = 6;
+const int HEIGHT = 210;
+const int WIDTH = 160;
+
 // command line arguments
 struct args
 {
@@ -122,8 +126,6 @@ void load_q_table(std::vector<std::vector<int>> &q_table)
  */
 void save_q_table(std::vector<std::vector<int>> &q_table)
 {
-    const int COLS = 6;
-    const int WIDTH = 160;
     std::ofstream file;
 
     file.open(CSV_FILE);
@@ -131,10 +133,10 @@ void save_q_table(std::vector<std::vector<int>> &q_table)
     for(int r = 0; r < WIDTH; r++)
     {
         file << r << ",";
-        for(int c = 0; c < COLS;)
+        for(int c = 0; c < ACTIONS;)
         {
             file << q_table[r][c];
-            if(c++ < COLS)
+            if(c++ < ACTIONS)
                 file << ",";
         }
         file << std::endl;
@@ -145,9 +147,6 @@ void save_q_table(std::vector<std::vector<int>> &q_table)
 
 int main(int argc, char* argv[])
 {
-    const int ACTIONS = 6;
-    const int HEIGHT = 210;
-    const int WIDTH = 160;
     int max_episode;
     ale::reward_t max_score;
     float alpha;
