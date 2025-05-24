@@ -24,9 +24,9 @@ struct args
 // help menu
 static struct argp_option options[] = {
     {0,0,0,0,"Optional arguments:",1},
-    {"episodes",'e',"10",0," Number of episodes default 10 ",1},
+    {"audio",'a',0,0," Enable audio/sound ",1},
     {"display",'d',0,0," Enable display on screen ",1},
-    {"sound",'s',0,0," Enable sound ",1},
+    {"episodes",'e',"10",0," Number of episodes default 10 ",1},
     {"png",'p',0,0," Enable saving a PNG image per episode ",1},
     {0,0,0,0,"GNU Options:", 2},
     {0,0,0,0,0,0}
@@ -46,6 +46,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
     struct args *args = (struct args*)state->input;
 
     switch(key) {
+        case 'a':
+            args->sound = true;
+            break;
         case 'd':
             args->display = true;
             break;
@@ -54,9 +57,6 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             break;
         case 'p':
             args->png = true;
-            break;
-        case 's':
-            args->sound = true;
             break;
         default:
             return ARGP_ERR_UNKNOWN;
