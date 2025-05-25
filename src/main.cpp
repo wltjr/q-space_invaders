@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
     // initialize random device
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<> rand_action(0,ACTIONS-1);
+    std::uniform_int_distribution<int> rand_action(0,ACTIONS-1);
     std::uniform_real_distribution<> rand_epsilon(0.0,1.0);
 
     // default arguments
