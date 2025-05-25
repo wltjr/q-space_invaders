@@ -138,7 +138,7 @@ void save_q_table(std::vector<std::vector<float>> &q_table)
         for(int c = 0; c < ACTIONS;)
         {
             file << q_table[r][c];
-            if(c++ < ACTIONS)
+            if(++c < ACTIONS)
                 file << ",";
         }
         file << std::endl;
