@@ -104,13 +104,15 @@ void load_q_table(std::vector<std::vector<int>> &q_table)
     }
 
     std::getline(file, line); // skip first line
-    for(int i = 0;std::getline(file, line); i++)
+    while(std::getline(file, line))
     {
+        std::string value;
         std::istringstream ss(std::move(line));
         std::vector<int> row;
 
-        row.push_back(i);
-        for (std::string value; std::getline(ss, value, ',');)
+        row.reserve(ACTIONS);
+        std::getline(ss, value, ','); // skip first value
+        while(std::getline(ss, value, ','))
             row.push_back(std::atoi(std::move(value).c_str()));
 
         q_table.push_back(std::move(row));
