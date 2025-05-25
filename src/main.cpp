@@ -90,7 +90,7 @@ static struct argp argp	 =  { options, parse_opt };
  * 
  * @param q_table un-allocated q-table
  */
-void load_q_table(std::vector<std::vector<int>> &q_table)
+void load_q_table(std::vector<std::vector<float>> &q_table)
 {
     std::ifstream file;
     std::string line;
@@ -108,12 +108,12 @@ void load_q_table(std::vector<std::vector<int>> &q_table)
     {
         std::string value;
         std::istringstream ss(std::move(line));
-        std::vector<int> row;
+        std::vector<float> row;
 
         row.reserve(ACTIONS);
         std::getline(ss, value, ','); // skip first value
         while(std::getline(ss, value, ','))
-            row.push_back(std::atoi(std::move(value).c_str()));
+            row.push_back(std::atof(std::move(value).c_str()));
 
         q_table.push_back(std::move(row));
     }
@@ -126,7 +126,7 @@ void load_q_table(std::vector<std::vector<int>> &q_table)
  * 
  * @param q_table q-table of actions for each cannon_x value
  */
-void save_q_table(std::vector<std::vector<int>> &q_table)
+void save_q_table(std::vector<std::vector<float>> &q_table)
 {
     std::ofstream file;
 
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
     float epsilon_min;
     float epsilon_decay;
     struct args args;
-    std::vector<std::vector<int>> q_table;
+    std::vector<std::vector<float>> q_table;
 
     // initialize Arcade Learning Environment
     ale::ALEInterface ale;
@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
         load_q_table(q_table);
 
     if(q_table.size() == 0)
-        q_table.resize(WIDTH, std::vector<int>(ACTIONS, 0));
+        q_table.resize(WIDTH, std::vector<float>(ACTIONS, 0));
 
     // load opencv template images
     cv::cvtColor(cv::imread("templates/cannon.png"), cannon, cv::COLOR_RGB2GRAY);
@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
             double min_value;
             ale::reward_t reward;
             std::vector<unsigned char> screen;
-            std::vector<int>::iterator max;
+            std::vector<float>::iterator max;
             ale::Action a;
             cv::Mat orig;
             cv::Mat result;
