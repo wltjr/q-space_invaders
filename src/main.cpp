@@ -147,7 +147,16 @@ void save_q_table(std::vector<std::vector<float>> &q_table)
 }
 
 
-int main(int argc, char* argv[])
+/**
+ * @brief Train agent using q-learning, generates q-table
+ * 
+ * @param args reference to args structure
+ * @param ale reference to arcade learning environment
+ * @param q_table reference to allocated q-table
+ */
+void train(args &args, 
+           ale::ALEInterface &ale,
+           std::vector<std::vector<float>> &q_table)
 {
     int max_episode;
     ale::reward_t max_score;
@@ -156,14 +165,7 @@ int main(int argc, char* argv[])
     float epsilon;
     float epsilon_min;
     float epsilon_decay;
-    struct args args;
-    std::vector<std::vector<float>> q_table;
-
-    // initialize Arcade Learning Environment
-    ale::ALEInterface ale;
     ale::ActionVect legal_actions;
-
-    // opencv
     cv::Mat cannon;
 
     // initialize random device
@@ -172,31 +174,9 @@ int main(int argc, char* argv[])
     std::uniform_int_distribution<int> rand_action(0,ACTIONS-1);
     std::uniform_real_distribution<> rand_epsilon(0.0,1.0);
 
-    // default arguments
-    args.episodes = 10;
-    args.display = false;
-    args.load = false;
-    args.sound = false;
-    args.png = false;
-    args.save = false;
-
-    // parse command line options
-    argp_parse (&argp, argc, argv, 0, 0, &args);
-
-    // initialize game
-    ale.setInt("random_seed", 123);
-    ale.setBool("display_screen", args.display);
-    ale.setBool("sound", args.sound);
-    ale.loadROM("space_invaders.bin");
-
     legal_actions = ale.getLegalActionSet();
-    if(args.load)
-        load_q_table(q_table);
 
-    if(q_table.size() == 0)
-        q_table.resize(WIDTH, std::vector<float>(ACTIONS, 0));
-
-    // load opencv template images
+    // load opencv template image
     cv::cvtColor(cv::imread("templates/cannon.png"), cannon, cv::COLOR_RGB2GRAY);
 
     // q-learning parameters
@@ -281,6 +261,41 @@ int main(int argc, char* argv[])
     }
     std::cout << std::format("Episode {} max score: {}", max_episode, max_score)
                 << std::endl;
+}
+
+
+int main(int argc, char* argv[])
+{
+    struct args args;
+    std::vector<std::vector<float>> q_table;
+
+    // initialize Arcade Learning Environment
+    ale::ALEInterface ale;
+
+    // default arguments
+    args.episodes = 10;
+    args.display = false;
+    args.load = false;
+    args.sound = false;
+    args.png = false;
+    args.save = false;
+
+    // parse command line options
+    argp_parse (&argp, argc, argv, 0, 0, &args);
+
+    // initialize game
+    ale.setInt("random_seed", 123);
+    ale.setBool("display_screen", args.display);
+    ale.setBool("sound", args.sound);
+    ale.loadROM("space_invaders.bin");
+
+    if(args.load)
+        load_q_table(q_table);
+
+    if(q_table.size() == 0)
+        q_table.resize(WIDTH, std::vector<float>(ACTIONS, 0));
+
+    train(args, ale, q_table);
 
     if(args.save)
         save_q_table(q_table);
