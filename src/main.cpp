@@ -43,6 +43,7 @@ static struct argp_option options[] = {
     {"load",'l',0,0," Load the q-table from file ",1},
     {"png",'p',0,0," Enable saving a PNG image per episode ",1},
     {"save",'s',0,0," Save the q-table to file ",1},
+    {"train",'t',0,0," Train the agent using q-learning ",1},
     {0,0,0,0,"GNU Options:", 2},
     {0,0,0,0,0,0}
 };
@@ -81,6 +82,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             break;
         case 's':
             args->save = true;
+            break;
+        case 't':
+            args->train = true;
             break;
         default:
             return ARGP_ERR_UNKNOWN;
@@ -297,7 +301,7 @@ int main(int argc, char* argv[])
     args.sound = false;
     args.png = false;
     args.save = false;
-    args.train = true;
+    args.train = false;
 
     // parse command line options
     argp_parse (&argp, argc, argv, 0, 0, &args);
@@ -314,7 +318,8 @@ int main(int argc, char* argv[])
     if(q_table.size() == 0)
         q_table.resize(WIDTH, std::vector<float>(ACTIONS, 0));
 
-    train(args, ale, q_table);
+    if(args.train)
+        train(args, ale, q_table);
 
     if(args.game)
     {
