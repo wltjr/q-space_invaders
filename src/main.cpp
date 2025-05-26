@@ -24,10 +24,12 @@ const int WIDTH = 160;
 struct args
 {
     bool display;
+    bool game;
     bool load;
     bool png;
     bool save;
     bool sound;
+    bool train;
     int episodes;
 };
 
@@ -37,6 +39,7 @@ static struct argp_option options[] = {
     {"audio",'a',0,0," Enable audio/sound ",1},
     {"display",'d',0,0," Enable display on screen ",1},
     {"episodes",'e',"10",0," Number of episodes default 10 ",1},
+    {"game",'g',0,0," Play game using q-table ",1},
     {"load",'l',0,0," Load the q-table from file ",1},
     {"png",'p',0,0," Enable saving a PNG image per episode ",1},
     {"save",'s',0,0," Save the q-table to file ",1},
@@ -66,6 +69,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             break;
         case 'e':
             args->episodes = arg ? atoi (arg) : 10;
+            break;
+        case 'g':
+            args->game = true;
             break;
         case 'l':
             args->load = true;
@@ -226,7 +232,7 @@ void train(args &args,
             cv::minMaxLoc(result, &min_value, &max_value, &min_location, &max_location);
             cannon_x = max_location.x + (cannon.cols + 1) / 2;
 
-            if(rand_epsilon(gen) < epsilon)
+            if(args.train && rand_epsilon(gen) < epsilon)
                 a = legal_actions[rand_action(gen)];
             else
             {
@@ -238,13 +244,16 @@ void train(args &args,
             reward = ale.act(a);
             total_reward += reward;
 
-            // update q-value
-            max = std::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
-            next_q_value = legal_actions[std::distance(q_table[cannon_x].begin(), max)];
-            q_table[cannon_x][a] += alpha * (reward + gamma * next_q_value - q_table[cannon_x][a]);
+            if(args.train)
+            {
+                // update q-value
+                max = std::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
+                next_q_value = legal_actions[std::distance(q_table[cannon_x].begin(), max)];
+                q_table[cannon_x][a] += alpha * (reward + gamma * next_q_value - q_table[cannon_x][a]);
 
-            // decay epsilon
-            epsilon = std::max(epsilon_min, epsilon * epsilon_decay);
+                // decay epsilon
+                epsilon = std::max(epsilon_min, epsilon * epsilon_decay);
+            }
         }
 
         // track max episode & score
@@ -282,10 +291,12 @@ int main(int argc, char* argv[])
     // default arguments
     args.episodes = 10;
     args.display = false;
+    args.game = false;
     args.load = false;
     args.sound = false;
     args.png = false;
     args.save = false;
+    args.train = true;
 
     // parse command line options
     argp_parse (&argp, argc, argv, 0, 0, &args);
@@ -303,6 +314,12 @@ int main(int argc, char* argv[])
         q_table.resize(WIDTH, std::vector<float>(ACTIONS, 0));
 
     train(args, ale, q_table);
+
+    if(args.game)
+    {
+        args.train = false;
+        train(args, ale, q_table);
+    }
 
     if(args.save)
         save_q_table(q_table);
