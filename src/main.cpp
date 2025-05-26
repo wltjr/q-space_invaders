@@ -232,13 +232,14 @@ void train(args &args,
             cv::minMaxLoc(result, &min_value, &max_value, &min_location, &max_location);
             cannon_x = max_location.x + (cannon.cols + 1) / 2;
 
-            if(args.train && rand_epsilon(gen) < epsilon)
+            // default action to max from q-table
+            max = std::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
+            a = legal_actions[std::distance(q_table[cannon_x].begin(), max)];
+
+            // random action if empty q-table or training
+            if((a == 0 && q_table[cannon_x][0] == 0) ||
+               (args.train && rand_epsilon(gen) < epsilon))
                 a = legal_actions[rand_action(gen)];
-            else
-            {
-                max = std::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
-                a = legal_actions[std::distance(q_table[cannon_x].begin(), max)];
-            }
 
             // take action & collect reward
             reward = ale.act(a);
