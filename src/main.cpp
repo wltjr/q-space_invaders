@@ -318,6 +318,10 @@ int main(int argc, char* argv[])
     if(q_table.size() == 0)
         q_table.resize(WIDTH, std::vector<float>(ACTIONS, 0));
 
+    // game without loading file requires training
+    if(args.game && !args.train && !args.load)
+        args.train = true;
+
     if(args.train)
         train(args, ale, q_table);
 
