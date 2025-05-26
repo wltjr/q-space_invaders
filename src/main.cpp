@@ -322,17 +322,21 @@ int main(int argc, char* argv[])
     if(args.game && !args.train && !args.load)
         args.train = true;
 
+    // enable q-learning training
     if(args.train)
+    {
         train(args, ale, q_table);
+
+        // only save after training
+        if(args.save)
+            save_q_table(q_table);
+    }
 
     if(args.game)
     {
         args.train = false;
         train(args, ale, q_table);
     }
-
-    if(args.save)
-        save_q_table(q_table);
 
     return 0;
 }
