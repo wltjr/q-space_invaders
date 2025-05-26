@@ -1,6 +1,7 @@
 #include <argp.h>
 
 #include <algorithm>
+#include <chrono>
 #include <format>
 #include <fstream>
 #include <iostream>
@@ -174,6 +175,8 @@ void train(args &args,
     std::uniform_int_distribution<int> rand_action(0,ACTIONS-1);
     std::uniform_real_distribution<> rand_epsilon(0.0,1.0);
 
+    auto start = std::chrono::high_resolution_clock::now();
+
     legal_actions = ale.getLegalActionSet();
 
     // load opencv template image
@@ -261,6 +264,10 @@ void train(args &args,
     }
     std::cout << std::format("Episode {} max score: {}", max_episode, max_score)
                 << std::endl;
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+    std::cout << "Elapsed time: " << duration.count() << "s" << std::endl;
 }
 
 
