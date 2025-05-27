@@ -142,7 +142,7 @@ void save_q_table(std::vector<std::vector<float>> &q_table)
     std::ofstream file;
 
     file.open(CSV_FILE);
-    file << "cannon_x,0-Noop,1-Fire,2-Right,3-Left,4-RightFire,5-LeftFire\n";
+    file << "cannon_x,0-Noop,1-Fire,2-Right,3-Left\n";
     for(int r = 0; r < WIDTH; r++)
     {
         file << r << ",";
