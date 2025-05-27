@@ -251,6 +251,10 @@ void train(args &args,
 
             if(args.train)
             {
+                // penalty for noop
+                if(a == 0)
+                    reward -= 1;
+
                 // update q-value
                 max = std::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
                 next_q_value = legal_actions[std::distance(q_table[cannon_x].begin(), max)];
