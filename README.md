@@ -6,13 +6,13 @@ Q-Learning Space Invaders using the [Arcade Learning Environment (ALE)](https://
 
 The following software is required for proper operation
 
-  [GCC >= 14.1](https://gcc.gnu.org/releases.html)
-  [CMake >= 3.20](https://cmake.org/download/)
-  [libsdl >= 2.30](https://www.libsdl.org/)
-  [ALE >= 0.11.0](https://ale.farama.org/)
-  [OpenCV >= 4.11.0](https://opencv.org/releases/)
+- [GCC >= 14.1](https://gcc.gnu.org/releases.html)
+- [CMake >= 3.20](https://cmake.org/download/)
+- [libsdl >= 2.30](https://www.libsdl.org/)
+- [ALE >= 0.11.0](https://ale.farama.org/)
+- [OpenCV >= 4.11.0](https://opencv.org/releases/)
 
-Requires Atari ROM `space_invaders.bin` which can be obtained from
+Atari ROM `space_invaders.bin` was obtained from
 [Atari Mania](https://www.atarimania.com/game-atari-2600-vcs-space-invaders_s6947.html)
 
 ## Build
