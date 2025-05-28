@@ -286,12 +286,14 @@ void train(args &args,
                   << std::endl;
         ale.reset_game();
     }
-    std::cout << std::format("Episode {} max score: {}", max_episode, max_score)
-                << std::endl;
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
-    std::cout << "Elapsed time: " << duration.count() << "s" << std::endl;
+
+    std::cout << std::endl
+              << std::format("Elapsed Time: {}s - Episode {} Max Score: {}",
+                             duration.count(), max_episode, max_score)
+              << std::endl;
 }
 
 
