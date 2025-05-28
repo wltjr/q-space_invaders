@@ -2,6 +2,24 @@
 
 Q-Learning Space Invaders using the [Arcade Learning Environment (ALE)](https://ale.farama.org/)
 
+## State Space
+The state space consists of the laser cannon's X coordinate, a total of
+160 potential values, reduced to a range of 38 to 120, for the game 
+playing bounds, invisible walls. There are 4 actions. The total q-table
+size is 160 x 4, even though only ~82 are used, with some outliers.
+
+### Action Space
+The
+[ALE Space Invaders Action Space](https://ale.farama.org/environments/space_invaders/#actions)
+has been reduced from 6 to the following 4 actions.
+
+| Value | Meaning |
+|-------|---------|
+| 0 | NOOP |
+| 1 | FIRE |
+| 2 | RIGHT |
+| 3 | NOOP |
+
 ## System Requirements
 
 The following software is required for proper operation
