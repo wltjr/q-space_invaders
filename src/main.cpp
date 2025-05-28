@@ -193,11 +193,11 @@ void train(args &args,
     cv::cvtColor(cv::imread("templates/cannon.png"), cannon, cv::COLOR_RGB2GRAY);
 
     // q-learning parameters
-    alpha = 0.01;               // learning rate
+    alpha = 0.001;              // learning rate
     gamma = 0.0095;             // discount factor
     epsilon = 1.0;              // exploration rate (starting value)
-    epsilon_min = 0.1;          // minimum exploration rate
-    epsilon_decay = 0.9999;      // decay rate for exploration
+    epsilon_min = 0.01;         // minimum exploration rate
+    epsilon_decay = 0.999999;   // decay rate for exploration
 
     max_episode = -1;
     max_score = -1;
