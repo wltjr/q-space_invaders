@@ -205,10 +205,11 @@ void train(args &args,
     for(int i = 0; i < args.episodes ;i++)
     {
         ale::reward_t total_reward;
+        int steps;
 
         total_reward = 0;
 
-        while(!ale.game_over())
+        for(steps = 0; !ale.game_over(); steps++)
         {
             int cannon_x;
             int next_q_value;
@@ -280,7 +281,8 @@ void train(args &args,
         if(args.png)
             ale.saveScreenPNG(std::format("episode-{}.png", i));
 
-        std::cout << std::format("Episode {} score: {}", i, total_reward)
+        std::cout << std::format("Episode {} score: {} steps: {}",
+                                 i, total_reward, steps)
                   << std::endl;
         ale.reset_game();
     }
