@@ -322,7 +322,7 @@ int main(int argc, char* argv[])
     ale.setInt("random_seed", 123);
     ale.setBool("display_screen", args.display);
     ale.setBool("sound", args.sound);
-    ale.loadROM("space_invaders.bin");
+    ale.loadROM("./rom/space_invaders.bin");
 
     if(args.load)
         load_q_table(q_table);
