@@ -31,6 +31,7 @@ struct args
     bool sound;
     bool train;
     int episodes;
+    std::string load_file;
 };
 
 // help menu
@@ -40,7 +41,7 @@ static struct argp_option options[] = {
     {"display",'d',0,0," Enable display on screen ",1},
     {"episodes",'e',"10",0," Number of episodes default 10 ",1},
     {"game",'g',0,0," Play game using q-table ",1},
-    {"load",'l',0,0," Load the q-table from file ",1},
+    {"load",'l',CSV_FILE,OPTION_ARG_OPTIONAL," Load the q-table from file ",1},
     {"png",'p',0,0," Enable saving a PNG image per episode ",1},
     {"save",'s',0,0," Save the q-table to file ",1},
     {"train",'t',0,0," Train the agent using q-learning ",1},
@@ -76,6 +77,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             break;
         case 'l':
             args->load = true;
+            args->load_file = arg ? arg : CSV_FILE;
             break;
         case 'p':
             args->png = true;
@@ -99,14 +101,16 @@ static struct argp argp	 =  { options, parse_opt };
 /**
  * @brief Load the q-table from csv file
  * 
+ * @param filename the file name of the csv file with q-table
  * @param q_table un-allocated q-table
  */
-void load_q_table(std::vector<std::vector<float>> &q_table)
+void load_q_table(std::string filename, 
+                  std::vector<std::vector<float>> &q_table)
 {
     std::ifstream file;
     std::string line;
 
-    file.open(CSV_FILE);
+    file.open(filename);
 
     if(!file.is_open())
     {
@@ -325,7 +329,7 @@ int main(int argc, char* argv[])
     ale.loadROM("./rom/space_invaders.bin");
 
     if(args.load)
-        load_q_table(q_table);
+        load_q_table(args.load_file, q_table);
 
     if(q_table.size() == 0)
         q_table.resize(WIDTH, std::vector<float>(ACTIONS, 0));
