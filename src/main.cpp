@@ -19,6 +19,8 @@ const char *CSV_FILE = "space_invaders_q_table.csv";
 const int ACTIONS = 4;
 const int HEIGHT = 210;
 const int WIDTH = 160;
+const int LEFT = 38;
+const int RIGHT = 120;
 
 // command line arguments
 struct args
@@ -245,6 +247,12 @@ void train(args &args,
             cv::minMaxLoc(result, &min_value, &max_value, &min_location, &max_location);
             cannon_x = max_location.x + (cannon.cols + 1) / 2;
 
+            // fix to bounds, prevent values outside
+            if(cannon_x < LEFT)
+                cannon_x = LEFT;
+            if(cannon_x > RIGHT)
+                cannon_x = RIGHT;
+
             // default action to max from q-table
             max = std::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
             a = legal_actions[std::distance(q_table[cannon_x].begin(), max)];
@@ -265,7 +273,7 @@ void train(args &args,
                     reward -= 1;
 
                 // penalty for hitting edge/wall
-                if(cannon_x <= 38 || cannon_x >=120)
+                if(cannon_x == LEFT || cannon_x == RIGHT)
                     reward -= 10;
 
                 // update q-value
