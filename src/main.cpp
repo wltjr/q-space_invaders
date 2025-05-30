@@ -32,6 +32,7 @@ struct args
     bool train;
     int episodes;
     std::string load_file;
+    std::string save_file;
 };
 
 // help menu
@@ -43,7 +44,7 @@ static struct argp_option options[] = {
     {"game",'g',0,0," Play game using q-table ",1},
     {"load",'l',CSV_FILE,OPTION_ARG_OPTIONAL," Load the q-table from file ",1},
     {"png",'p',0,0," Enable saving a PNG image per episode ",1},
-    {"save",'s',0,0," Save the q-table to file ",1},
+    {"save",'s',CSV_FILE,OPTION_ARG_OPTIONAL," Save the q-table to file ",1},
     {"train",'t',0,0," Train the agent using q-learning ",1},
     {0,0,0,0,"GNU Options:", 2},
     {0,0,0,0,0,0}
@@ -84,6 +85,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             break;
         case 's':
             args->save = true;
+            args->save_file = arg ? arg : CSV_FILE;
             break;
         case 't':
             args->train = true;
@@ -139,13 +141,15 @@ void load_q_table(std::string filename,
 /**
  * @brief Save the q-table to csv file
  * 
+ * @param filename the file name of the csv file to save q-table
  * @param q_table q-table of actions for each cannon_x value
  */
-void save_q_table(std::vector<std::vector<float>> &q_table)
+void save_q_table(std::string filename, 
+                  std::vector<std::vector<float>> &q_table)
 {
     std::ofstream file;
 
-    file.open(CSV_FILE);
+    file.open(filename);
     file << "cannon_x,0-Noop,1-Fire,2-Right,3-Left\n";
     for(int r = 0; r < WIDTH; r++)
     {
@@ -345,7 +349,7 @@ int main(int argc, char* argv[])
 
         // only save after training
         if(args.save)
-            save_q_table(q_table);
+            save_q_table(args.save_file, q_table);
     }
 
     if(args.game)
