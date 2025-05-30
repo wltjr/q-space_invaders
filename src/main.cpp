@@ -297,8 +297,8 @@ void train(args &args,
         if(args.png)
             ale.saveScreenPNG(std::format("episode-{}.png", i));
 
-        std::cout << std::format("Episode {} score: {} steps: {}",
-                                 i, total_reward, steps)
+        std::cout << std::format("Episode {} score: {} steps: {} epsilon: {}",
+                                 i, total_reward, steps, epsilon)
                   << std::endl;
         ale.reset_game();
     }
