@@ -11,6 +11,18 @@
 #include <ale/ale_interface.hpp>
 #include <opencv4/opencv2/opencv.hpp>
 
+#define STRINGIFY(x) STRINGIFY2(x)
+#define STRINGIFY2(x) #x
+
+// default values
+#define EPISODES 10
+// q-learning parameters
+#define ALPHA 0.001              // learning rate
+#define GAMMA 0.0095             // discount factor
+#define EPSILON 1.0              // exploration rate (starting value)
+#define EPSILON_MIN 0.1          // minimum exploration rate
+#define EPSILON_DECAY 0.999999   // decay rate for exploration
+
 const char *argp_program_version = "Version 0.1";
 const char *argp_program_bug_address = "w@wltjr.com";
 
@@ -32,13 +44,12 @@ struct args
     bool save = false;
     bool sound = false;
     bool train = false;
-    int episodes = 10;
-    // q-learning parameters
-    float alpha = 0.001;              // learning rate
-    float gamma = 0.0095;             // discount factor
-    float epsilon = 1.0;              // exploration rate (starting value)
-    float epsilon_min = 0.1;          // minimum exploration rate
-    float epsilon_decay = 0.999999;   // decay rate for exploration
+    int episodes = EPISODES;
+    float alpha = ALPHA;
+    float gamma = GAMMA;
+    float epsilon = EPSILON;
+    float epsilon_min = EPSILON_MIN;
+    float epsilon_decay = EPSILON_DECAY;
     std::string load_file = CSV_FILE;
     std::string save_file = CSV_FILE;
 };
@@ -48,18 +59,18 @@ static struct argp_option options[] = {
     {0,0,0,0,"Optional arguments:",1},
     {"audio",'a',0,0," Enable audio/sound ",1},
     {"display",'d',0,0," Enable display on screen ",1},
-    {"episodes",'e',"10",0," Number of episodes default 10 ",1},
+    {"episodes",'e',STRINGIFY(EPISODES),0," Number of episodes ",1},
     {"game",'g',0,0," Play game using q-table ",1},
     {"load",'l',CSV_FILE,OPTION_ARG_OPTIONAL," Load the q-table from file ",1},
     {"png",'p',0,0," Enable saving a PNG image per episode ",1},
     {"save",'s',CSV_FILE,OPTION_ARG_OPTIONAL," Save the q-table to file ",1},
     {"train",'t',0,0," Train the agent using q-learning ",1},
     {0,0,0,0,"Q-Learning parameters:",2},
-    {"alpha",'A',"0.001",0," Alpha learning rate",2},
-    {"gamma",'G',"0.0095",0," Gamma learning rate discount factor",2},
-    {"epsilon",'E',"1.0",0," Epsilon exploration rate (starting value)",2},
-    {"min",'M',"0.1",0," Minimum exploration rate",2},
-    {"decay",'D',"0.999999",0," Decay rate for exploration",2},
+    {"alpha",'A',STRINGIFY(ALPHA),0," Alpha learning rate",2},
+    {"gamma",'G',STRINGIFY(GAMMA),0," Gamma learning rate discount factor",2},
+    {"epsilon",'E',STRINGIFY(EPSILON),0," Epsilon exploration rate (starting value)",2},
+    {"min",'M',STRINGIFY(EPSILON_MIN),0," Minimum exploration rate",2},
+    {"decay",'D',STRINGIFY(EPSILON_DECAY),0," Decay rate for exploration",2},
     {0,0,0,0,"GNU Options:", 3},
     {0,0,0,0,0,0}
 };
@@ -85,7 +96,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             args->display = true;
             break;
         case 'e':
-            args->episodes = arg ? atoi (arg) : 10;
+            args->episodes = arg ? atoi (arg) : EPISODES;
             break;
         case 'g':
             args->game = true;
@@ -105,19 +116,19 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             args->train = true;
             break;
         case 'A':
-            args->alpha = arg ? atof (arg) : 0.001;
+            args->alpha = arg ? atof (arg) : ALPHA;
             break;
         case 'G':
-            args->gamma = arg ? atof (arg) : 0.0095;
+            args->gamma = arg ? atof (arg) : GAMMA;
             break;
         case 'E':
-            args->epsilon = arg ? atof (arg) : 1.0;
+            args->epsilon = arg ? atof (arg) : EPSILON;
             break;
         case 'M':
-            args->epsilon_min = arg ? atof (arg) : 0.1;
+            args->epsilon_min = arg ? atof (arg) : EPSILON_MIN;
             break;
         case 'D':
-            args->epsilon_decay = arg ? atof (arg) : 0.999999;
+            args->epsilon_decay = arg ? atof (arg) : EPSILON_DECAY;
             break;
         default:
             return ARGP_ERR_UNKNOWN;
