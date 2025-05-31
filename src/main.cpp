@@ -25,22 +25,22 @@ const int RIGHT = 120;
 // command line arguments
 struct args
 {
-    bool display;
-    bool game;
-    bool load;
-    bool png;
-    bool save;
-    bool sound;
-    bool train;
-    int episodes;
+    bool display = false;
+    bool game = false;
+    bool load = false;
+    bool png = false;
+    bool save = false;
+    bool sound = false;
+    bool train = false;
+    int episodes = 10;
     // q-learning parameters
-    float alpha;                // learning rate
-    float gamma;                // discount factor
-    float epsilon;              // exploration rate (starting value)
-    float epsilon_min;          // minimum exploration rate
-    float epsilon_decay;        // decay rate for exploration
-    std::string load_file;
-    std::string save_file;
+    float alpha = 0.001;              // learning rate
+    float gamma = 0.0095;             // discount factor
+    float epsilon = 1.0;              // exploration rate (starting value)
+    float epsilon_min = 0.1;          // minimum exploration rate
+    float epsilon_decay = 0.999999;   // decay rate for exploration
+    std::string load_file = CSV_FILE;
+    std::string save_file = CSV_FILE;
 };
 
 // help menu
@@ -343,23 +343,6 @@ int main(int argc, char* argv[])
 {
     struct args args;
     std::vector<std::vector<float>> q_table;
-
-    // default arguments
-    args.episodes = 10;
-    args.display = false;
-    args.game = false;
-    args.load = false;
-    args.sound = false;
-    args.png = false;
-    args.save = false;
-    args.train = false;
-
-    // q-learning parameters
-    args.alpha = 0.001;              // learning rate
-    args.gamma = 0.0095;             // discount factor
-    args.epsilon = 1.0;              // exploration rate (starting value)
-    args.epsilon_min = 0.1;          // minimum exploration rate
-    args.epsilon_decay = 0.999999;   // decay rate for exploration
 
     // parse command line options
     argp_parse (&argp, argc, argv, 0, 0, &args);
