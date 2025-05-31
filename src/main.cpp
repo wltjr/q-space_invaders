@@ -33,6 +33,12 @@ struct args
     bool sound;
     bool train;
     int episodes;
+    // q-learning parameters
+    float alpha;                // learning rate
+    float gamma;                // discount factor
+    float epsilon;              // exploration rate (starting value)
+    float epsilon_min;          // minimum exploration rate
+    float epsilon_decay;        // decay rate for exploration
     std::string load_file;
     std::string save_file;
 };
@@ -48,7 +54,13 @@ static struct argp_option options[] = {
     {"png",'p',0,0," Enable saving a PNG image per episode ",1},
     {"save",'s',CSV_FILE,OPTION_ARG_OPTIONAL," Save the q-table to file ",1},
     {"train",'t',0,0," Train the agent using q-learning ",1},
-    {0,0,0,0,"GNU Options:", 2},
+    {0,0,0,0,"Q-Learning parameters:",2},
+    {"alpha",'A',"0.001",0," Alpha learning rate",2},
+    {"gamma",'G',"0.0095",0," Gamma learning rate discount factor",2},
+    {"epsilon",'E',"1.0",0," Epsilon exploration rate (starting value)",2},
+    {"min",'M',"0.1",0," Minimum exploration rate",2},
+    {"decay",'D',"0.999999",0," Decay rate for exploration",2},
+    {0,0,0,0,"GNU Options:", 3},
     {0,0,0,0,0,0}
 };
 
@@ -91,6 +103,21 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             break;
         case 't':
             args->train = true;
+            break;
+        case 'A':
+            args->alpha = arg ? atof (arg) : 0.001;
+            break;
+        case 'G':
+            args->gamma = arg ? atof (arg) : 0.0095;
+            break;
+        case 'E':
+            args->epsilon = arg ? atof (arg) : 1.0;
+            break;
+        case 'M':
+            args->epsilon_min = arg ? atof (arg) : 0.1;
+            break;
+        case 'D':
+            args->epsilon_decay = arg ? atof (arg) : 0.999999;
             break;
         default:
             return ARGP_ERR_UNKNOWN;
@@ -181,19 +208,14 @@ void train(args &args,
 {
     int max_episode;
     ale::reward_t max_score;
-    float alpha;
-    float gamma;
-    float epsilon;
-    float epsilon_min;
-    float epsilon_decay;
     ale::ActionVect legal_actions;
     cv::Mat cannon;
 
     // initialize random device
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> rand_action(0,ACTIONS-1);
-    std::uniform_real_distribution<> rand_epsilon(0.0,1.0);
+    std::uniform_int_distribution<int> rand_action(0, ACTIONS-1);
+    std::uniform_real_distribution<> rand_epsilon(0.0, args.epsilon);
 
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -201,13 +223,6 @@ void train(args &args,
 
     // load opencv template image
     cv::cvtColor(cv::imread("templates/cannon.png"), cannon, cv::COLOR_RGB2GRAY);
-
-    // q-learning parameters
-    alpha = 0.001;              // learning rate
-    gamma = 0.0095;             // discount factor
-    epsilon = 1.0;              // exploration rate (starting value)
-    epsilon_min = 0.01;         // minimum exploration rate
-    epsilon_decay = 0.999999;   // decay rate for exploration
 
     max_episode = -1;
     max_score = -1;
@@ -260,7 +275,7 @@ void train(args &args,
 
             // random action if empty q-table or training
             if((a == 0 && q_table[cannon_x][0] == 0) ||
-               (args.train && rand_epsilon(gen) < epsilon))
+               (args.train && rand_epsilon(gen) < args.epsilon))
                 a = legal_actions[rand_action(gen)];
 
             // take action & collect reward
@@ -288,10 +303,12 @@ void train(args &args,
                 // update q-value
                 max = std::max_element(q_table[next_x].begin(), q_table[next_x].end());
                 next_a = legal_actions[std::distance(q_table[next_x].begin(), max)];
-                q_table[cannon_x][a] += alpha * (reward + gamma * q_table[next_x][next_a] - q_table[cannon_x][a]);
+                q_table[cannon_x][a] += args.alpha *
+                    (reward + args.gamma * q_table[next_x][next_a] - q_table[cannon_x][a]);
 
                 // decay epsilon
-                epsilon = std::max(epsilon_min, epsilon * epsilon_decay);
+                args.epsilon = std::max(args.epsilon_min, 
+                                        args.epsilon * args.epsilon_decay);
             }
         }
 
@@ -307,7 +324,7 @@ void train(args &args,
             ale.saveScreenPNG(std::format("episode-{}.png", i));
 
         std::cout << std::format("Episode {} score: {} steps: {} epsilon: {}",
-                                 i, total_reward, steps, epsilon)
+                                 i, total_reward, steps, args.epsilon)
                   << std::endl;
         ale.reset_game();
     }
@@ -339,6 +356,13 @@ int main(int argc, char* argv[])
     args.png = false;
     args.save = false;
     args.train = false;
+
+    // q-learning parameters
+    args.alpha = 0.001;              // learning rate
+    args.gamma = 0.0095;             // discount factor
+    args.epsilon = 1.0;              // exploration rate (starting value)
+    args.epsilon_min = 0.1;          // minimum exploration rate
+    args.epsilon_decay = 0.999999;   // decay rate for exploration
 
     // parse command line options
     argp_parse (&argp, argc, argv, 0, 0, &args);
