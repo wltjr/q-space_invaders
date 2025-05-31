@@ -344,9 +344,6 @@ int main(int argc, char* argv[])
     struct args args;
     std::vector<std::vector<float>> q_table;
 
-    // initialize Arcade Learning Environment
-    ale::ALEInterface ale;
-
     // default arguments
     args.episodes = 10;
     args.display = false;
@@ -366,6 +363,9 @@ int main(int argc, char* argv[])
 
     // parse command line options
     argp_parse (&argp, argc, argv, 0, 0, &args);
+
+    // initialize Arcade Learning Environment
+    ale::ALEInterface ale;
 
     // initialize game
     ale.setInt("random_seed", 123);
