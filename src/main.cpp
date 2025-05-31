@@ -222,6 +222,7 @@ void train(args &args,
         for(steps = 0; !ale.game_over(); steps++)
         {
             int cannon_x;
+            int next_x;
             int next_q_value;
             double max_value;
             double min_value;
@@ -276,9 +277,17 @@ void train(args &args,
                 if(cannon_x == LEFT || cannon_x == RIGHT)
                     reward -= 10;
 
+                next_x = cannon_x;
+
+                // move to next state based on action
+                if(a == 2 || cannon_x == LEFT)
+                    next_x--;
+                else if (a == 3 || cannon_x == RIGHT)
+                    next_x++;
+
                 // update q-value
-                max = std::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
-                next_q_value = legal_actions[std::distance(q_table[cannon_x].begin(), max)];
+                max = std::max_element(q_table[next_x].begin(), q_table[next_x].end());
+                next_q_value = legal_actions[std::distance(q_table[next_x].begin(), max)];
                 q_table[cannon_x][a] += alpha * (reward + gamma * next_q_value - q_table[cannon_x][a]);
 
                 // decay epsilon
