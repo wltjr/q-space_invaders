@@ -223,13 +223,13 @@ void train(args &args,
         {
             int cannon_x;
             int next_x;
-            int next_q_value;
             double max_value;
             double min_value;
             ale::reward_t reward;
             std::vector<unsigned char> screen;
             std::vector<float>::iterator max;
             ale::Action a;
+            ale::Action next_a;
             cv::Mat orig;
             cv::Mat result;
             cv::Point max_location;
@@ -287,8 +287,8 @@ void train(args &args,
 
                 // update q-value
                 max = std::max_element(q_table[next_x].begin(), q_table[next_x].end());
-                next_q_value = legal_actions[std::distance(q_table[next_x].begin(), max)];
-                q_table[cannon_x][a] += alpha * (reward + gamma * next_q_value - q_table[cannon_x][a]);
+                next_a = legal_actions[std::distance(q_table[next_x].begin(), max)];
+                q_table[cannon_x][a] += alpha * (reward + gamma * q_table[next_x][next_a] - q_table[cannon_x][a]);
 
                 // decay epsilon
                 epsilon = std::max(epsilon_min, epsilon * epsilon_decay);
