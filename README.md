@@ -4,7 +4,7 @@ Q-Learning Space Invaders using the [Arcade Learning Environment (ALE)](https://
 
 ## State Space
 The state space consists of the laser cannon's X coordinate, a total of
-160 potential values, reduced to a range of 38 to 120, for the game 
+160 potential values, reduced to a range of 38 to 120, for the game
 playing bounds, invisible walls. There are 4 actions. The total q-table
 size is 160 x 4, even though only ~82 are used, with some outliers.
 
@@ -18,7 +18,9 @@ has been reduced from 6 to the following 4 actions.
 | 0 | NOOP |
 | 1 | FIRE |
 | 2 | RIGHT |
-| 3 | NOOP |
+| 3 | LEFT |
+| 4 | RIGHT-FIRE |
+| 5 | LEFT-FIRE |
 
 ## System Requirements
 
