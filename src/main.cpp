@@ -29,7 +29,7 @@ const char *argp_program_bug_address = "w@wltjr.com";
 
 const char *CSV_FILE = "space_invaders_q_table.csv";
 
-const int ACTIONS = 4;
+const int ACTIONS = 6;
 const int HEIGHT = 210;
 const int WIDTH = 160;
 const int LEFT = 38;
@@ -200,7 +200,7 @@ void save_q_table(std::string filename,
     std::ofstream file;
 
     file.open(filename);
-    file << "cannon_x,0-Noop,1-Fire,2-Right,3-Left\n";
+    file << "cannon_x,0-Noop,1-Fire,2-Right,3-Left,4-RightFire,5-LeftFire\n";
     for(int r = 0; r < WIDTH; r++)
     {
         file << r << ",";
@@ -324,9 +324,9 @@ void train(args &args,
                 next_x = cannon_x;
 
                 // move to next state based on action
-                if(a == 2 || cannon_x == LEFT)
+                if(a == 2 || a == 4 || cannon_x == LEFT)
                     next_x--;
-                else if (a == 3 || cannon_x == RIGHT)
+                else if (a == 3 || a == 5 || cannon_x == RIGHT)
                     next_x++;
 
                 // update q-value
