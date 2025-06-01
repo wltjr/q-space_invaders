@@ -16,6 +16,7 @@
 
 // default values
 #define EPISODES 10
+#define SKIP 2
 // q-learning parameters
 #define ALPHA 0.001              // learning rate
 #define GAMMA 0.0095             // discount factor
@@ -49,6 +50,7 @@ struct args
     bool sound = false;
     bool train = false;
     int episodes = EPISODES;
+    int skip = SKIP;
     float alpha = ALPHA;
     float gamma = GAMMA;
     float epsilon = EPSILON;
@@ -75,6 +77,7 @@ static struct argp_option options[] = {
     {"epsilon",'E',STRINGIFY(EPSILON),0," Epsilon exploration rate (starting value)",2},
     {"min",'M',STRINGIFY(EPSILON_MIN),0," Minimum exploration rate",2},
     {"decay",'D',STRINGIFY(EPSILON_DECAY),0," Decay rate for exploration",2},
+    {"skip",'S',STRINGIFY(SKIP),0," Skip frames and repeat actions",2},
     {0,0,0,0,"GNU Options:", 3},
     {0,0,0,0,0,0}
 };
@@ -133,6 +136,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             break;
         case 'D':
             args->epsilon_decay = arg ? atof (arg) : EPSILON_DECAY;
+            break;
+        case 'S':
+            args->skip = arg ? atoi (arg) : SKIP;
             break;
         default:
             return ARGP_ERR_UNKNOWN;
@@ -300,6 +306,13 @@ void train(args &args,
 
             if(args.train)
             {
+                // skip k frames, repeat action
+                for(int k = 0; k < args.skip; steps++, k++)
+                {
+                    reward = ale.act(a);
+                    total_reward += reward;
+                }
+
                 // penalty for noop
                 if(a == 0)
                     reward -= 1;
