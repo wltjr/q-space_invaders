@@ -33,6 +33,10 @@ const int HEIGHT = 210;
 const int WIDTH = 160;
 const int LEFT = 38;
 const int RIGHT = 120;
+const int CROP_X = 20;
+const int CROP_Y = 30;
+const int CROP_HEIGHT = 165;
+const int CROP_WIDTH = 120;
 
 // command line arguments
 struct args
@@ -264,15 +268,16 @@ void train(args &args,
             // prepare current game screen for opencv
             ale.getScreenGrayscale(screen);
             orig = cv::Mat(HEIGHT, WIDTH, CV_8UC1, &screen[0]);
+            orig = cv::Mat(orig, cv::Rect(CROP_X, CROP_Y, CROP_WIDTH, CROP_HEIGHT));
 
             // match cannon template in screen
-            result.create(HEIGHT, WIDTH, CV_8UC1);
+            result.create(CROP_HEIGHT, CROP_WIDTH, CV_8UC1);
             cv::matchTemplate(orig, cannon, result, cv::TM_CCOEFF_NORMED);
             normalize( result, result, 0, 255, cv::NORM_MINMAX, CV_8UC1);
 
             // get cannon location
             cv::minMaxLoc(result, &min_value, &max_value, &min_location, &max_location);
-            cannon_x = max_location.x + (cannon.cols + 1) / 2;
+            cannon_x = max_location.x + (cannon.cols + 1) / 2 + 20; // + 20 for cropping
 
             // fix to bounds, prevent values outside
             if(cannon_x < LEFT)
