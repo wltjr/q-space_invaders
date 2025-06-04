@@ -223,6 +223,32 @@ void save_q_table(std::string filename,
 
 
 /**
+ * @brief Convert csv/q-table column to ALE action
+ * 
+ * @param col column number
+ * 
+ * @return ale::Action ALE action
+ */
+ale::Action col_to_action(int col)
+{
+    ale::Action a;
+
+    if(col == 2)
+        a = ale::Action::PLAYER_A_RIGHT;
+    else if(col == 3)
+        a = ale::Action::PLAYER_A_LEFT;
+    else if(col == 4)
+        a = ale::Action::PLAYER_A_RIGHTFIRE;
+    else if(col == 5)
+        a = ale::Action::PLAYER_A_LEFTFIRE;
+    else
+        a = static_cast<ale::Action>(col);
+
+    return a;
+}
+
+
+/**
  * @brief Train agent using q-learning, generates q-table
  * 
  * @param args reference to args structure
@@ -271,6 +297,8 @@ void train(args &args,
 
         for(; !ale.game_over(); steps++)
         {
+            int a;
+            int next_a;
             int cannon_x;
             int next_x;
             double max_value;
@@ -278,8 +306,7 @@ void train(args &args,
             ale::reward_t reward;
             std::vector<unsigned char> screen;
             std::vector<float>::iterator max;
-            ale::Action a;
-            ale::Action next_a;
+            ale::Action action;
             cv::Mat orig;
             cv::Mat result;
             cv::Point max_location;
@@ -307,15 +334,16 @@ void train(args &args,
 
             // default action to max from q-table
             max = std::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
-            a = legal_actions[std::distance(q_table[cannon_x].begin(), max)];
+            a = std::distance(q_table[cannon_x].begin(), max);
 
             // random action if empty q-table or training
             if((a == 0 && q_table[cannon_x][0] == 0) ||
                (args.train && rand_epsilon(gen) < args.epsilon))
-                a = legal_actions[rand_action(gen)];
+                a = rand_action(gen);
 
             // take action & collect reward
-            reward = ale.act(a);
+            action = col_to_action(a);
+            reward = ale.act(action);
             total_reward += reward;
 
             if(args.train)
@@ -323,7 +351,7 @@ void train(args &args,
                 // skip k frames, repeat action
                 for(int k = 0; k < args.skip; steps++, k++)
                 {
-                    reward = ale.act(a);
+                    reward = ale.act(action);
                     total_reward += reward;
                 }
 
@@ -341,7 +369,7 @@ void train(args &args,
 
                 // update q-value
                 max = std::max_element(q_table[next_x].begin(), q_table[next_x].end());
-                next_a = legal_actions[std::distance(q_table[next_x].begin(), max)];
+                next_a = std::distance(q_table[next_x].begin(), max);
                 q_table[cannon_x][a] += args.alpha *
                     (reward + args.gamma * q_table[next_x][next_a] - q_table[cannon_x][a]);
 
