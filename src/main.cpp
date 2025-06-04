@@ -86,11 +86,11 @@ static struct argp_option options[] = {
 };
 
 /**
- * Parse command line options
+ * @brief Parse command line options
  *
- * @key the integer key provided by the current option to the option parser.
- * @arg the name of an argument associated with this option
- * @state points to a struct argp_state
+ * @param key the integer key provided by the current option to the option parser.
+ * @param arg the name of an argument associated with this option
+ * @param state points to a struct argp_state
  *
  * @return ARGP_ERR_UNKNOWN for any key value not recognize
  */
