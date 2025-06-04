@@ -331,10 +331,6 @@ void train(args &args,
                 if(a == 0)
                     reward -= 1;
 
-                // penalty for hitting edge/wall
-                if(cannon_x == LEFT || cannon_x == RIGHT)
-                    reward -= 10;
-
                 next_x = cannon_x;
 
                 // move to next state based on action
