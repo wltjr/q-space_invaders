@@ -16,6 +16,7 @@
 
 // default values
 #define EPISODES 10
+#define NOOP 30
 #define SKIP 2
 // q-learning parameters
 #define ALPHA 0.001              // learning rate
@@ -50,6 +51,7 @@ struct args
     bool sound = false;
     bool train = false;
     int episodes = EPISODES;
+    int noop = NOOP;
     int skip = SKIP;
     float alpha = ALPHA;
     float gamma = GAMMA;
@@ -77,6 +79,7 @@ static struct argp_option options[] = {
     {"epsilon",'E',STRINGIFY(EPSILON),0," Epsilon exploration rate (starting value)",2},
     {"min",'M',STRINGIFY(EPSILON_MIN),0," Minimum exploration rate",2},
     {"decay",'D',STRINGIFY(EPSILON_DECAY),0," Decay rate for exploration",2},
+    {"noop",'N',STRINGIFY(NOOP),0," Skip initial frames using noop action",2},
     {"skip",'S',STRINGIFY(SKIP),0," Skip frames and repeat actions",2},
     {0,0,0,0,"GNU Options:", 3},
     {0,0,0,0,0,0}
@@ -133,6 +136,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             break;
         case 'M':
             args->epsilon_min = arg ? atof (arg) : EPSILON_MIN;
+            break;
+        case 'N':
+            args->noop = arg ? atoi (arg) : NOOP;
             break;
         case 'D':
             args->epsilon_decay = arg ? atof (arg) : EPSILON_DECAY;
@@ -253,9 +259,17 @@ void train(args &args,
         ale::reward_t total_reward;
         int steps;
 
+        steps = 0;
         total_reward = 0;
 
-        for(steps = 0; !ale.game_over(); steps++)
+        if(args.train)
+        {
+            // skip initial frames with noop action
+            for(int i = 0; i < args.noop; steps++, i++)
+                ale.act(legal_actions[0]);
+        }
+
+        for(; !ale.game_over(); steps++)
         {
             int cannon_x;
             int next_x;
