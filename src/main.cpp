@@ -19,8 +19,8 @@
 #define NOOP 30
 #define SKIP 2
 // q-learning parameters
-#define ALPHA 0.001              // learning rate
-#define GAMMA 0.0095             // discount factor
+#define ALPHA 0.00025            // learning rate
+#define GAMMA 0.99               // discount factor
 #define EPSILON 1.0              // exploration rate (starting value)
 #define EPSILON_MIN 0.1          // minimum exploration rate
 #define EPSILON_DECAY 0.999999   // decay rate for exploration
