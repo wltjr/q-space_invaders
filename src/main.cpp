@@ -261,7 +261,6 @@ void train(args &args,
 {
     int max_episode;
     ale::reward_t max_score;
-    ale::ActionVect legal_actions;
     cv::Mat cannon;
 
     // initialize random device
@@ -271,8 +270,6 @@ void train(args &args,
     std::uniform_real_distribution<> rand_epsilon(0.0, args.epsilon);
 
     auto start = std::chrono::high_resolution_clock::now();
-
-    legal_actions = ale.getLegalActionSet();
 
     // load opencv template image
     cv::cvtColor(cv::imread("templates/cannon.png"), cannon, cv::COLOR_RGB2GRAY);
@@ -292,7 +289,7 @@ void train(args &args,
         {
             // skip initial frames with noop action
             for(int i = 0; i < args.noop; steps++, i++)
-                ale.act(legal_actions[0]);
+                ale.act(ale::Action::PLAYER_A_NOOP);
         }
 
         for(; !ale.game_over(); steps++)
