@@ -281,7 +281,9 @@ void train(args &args,
     {
         ale::reward_t total_reward;
         int steps;
+        int lives;
 
+        lives = ale.lives();
         steps = 0;
         total_reward = 0;
 
@@ -355,6 +357,11 @@ void train(args &args,
                 // penalty for noop
                 if(a == 0)
                     reward -= 1;
+                else if(ale.lives() < lives)
+                {
+                    reward -= 1;
+                    lives = ale.lives();
+                }
 
                 next_x = cannon_x;
 
