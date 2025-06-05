@@ -362,10 +362,10 @@ void train(args &args,
                 next_x = cannon_x;
 
                 // move to next state based on action
-                if(a == 2 || a == 4 || cannon_x == RIGHT)
-                    next_x--;
-                else if (a == 3 || a == 5 || cannon_x == LEFT)
+                if(a == 2 || a == 4 || cannon_x == LEFT)
                     next_x++;
+                else if (a == 3 || a == 5 || cannon_x == RIGHT)
+                    next_x--;
 
                 // update q-value
                 max = std::max_element(q_table[next_x].begin(), q_table[next_x].end());
