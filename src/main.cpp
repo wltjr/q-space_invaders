@@ -428,9 +428,11 @@ int main(int argc, char* argv[])
     ale.setBool("sound", args.sound);
     ale.loadROM("./rom/space_invaders.bin");
 
+    // load q-table from csv file
     if(args.load)
         load_q_table(args.load_file, q_table);
 
+    // allocate q-table if empty
     if(q_table.size() == 0)
         q_table.resize(WIDTH, std::vector<float>(ACTIONS, 0));
 
@@ -458,6 +460,7 @@ int main(int argc, char* argv[])
             save_q_table(args.save_file, q_table);
     }
 
+    // play game using trained q-table, random actions if empty
     if(args.game)
     {
         args.train = false;
