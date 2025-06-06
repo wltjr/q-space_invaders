@@ -441,6 +441,16 @@ int main(int argc, char* argv[])
     // enable q-learning training
     if(args.train)
     {
+        std::cout << "Training Parameters:" << std::endl
+                  << "Episodes:      " << args.episodes << std::endl
+                  << "Alpha:         " << args.alpha << std::endl
+                  << "Gamma:         " << args.gamma << std::endl
+                  << "Epsilon:       " << args.epsilon << std::endl
+                  << "Epsilon Min:   " << args.epsilon_min << std::endl
+                  << "Epsilon Decay: " << args.epsilon_decay << std::endl
+                  << "Noop:          " << args.noop << std::endl
+                  << "Frame Skip:    " << args.skip << std::endl;
+
         train(args, ale, q_table);
 
         // only save after training
