@@ -300,6 +300,7 @@ void train(args &args,
             int next_a;
             int cannon_x;
             int next_x;
+            float alpha;
             double max_value;
             double min_value;
             ale::reward_t reward;
@@ -376,7 +377,8 @@ void train(args &args,
                 // update q-value
                 max = std::max_element(q_table[next_x].begin(), q_table[next_x].end());
                 next_a = std::distance(q_table[next_x].begin(), max);
-                q_table[cannon_x][a] += args.alpha *
+                alpha = args.alpha / (1 + i * args.gamma);
+                q_table[cannon_x][a] = (1 - alpha) * q_table[cannon_x][a] + alpha *
                     (reward + args.gamma * q_table[next_x][next_a] - q_table[cannon_x][a]);
 
                 // decay epsilon
