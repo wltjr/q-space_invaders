@@ -358,12 +358,12 @@ void train(args &args,
                 // penalty for dying
                 if(ale.lives() < lives)
                 {
-                    reward -= 1;
+                    reward = -10;
                     lives = ale.lives();
                 }
                 // penalty for noop
                 else if(a == 0)
-                    reward -= 1;
+                    reward = -1;
 
                 next_x = cannon_x;
 
