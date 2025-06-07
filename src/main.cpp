@@ -349,10 +349,7 @@ void train(args &args,
             {
                 // skip k frames, repeat action
                 for(int k = 0; k < args.skip; steps++, k++)
-                {
-                    reward = ale.act(action);
-                    total_reward += reward;
-                }
+                    total_reward += ale.act(action);
 
                 // penalty for dying
                 if(ale.lives() < lives)
