@@ -347,6 +347,10 @@ void train(args &args,
 
             if(args.train)
             {
+                // normalize reward -1, 0, or 1
+                if(reward > 0)
+                    reward = 1;
+
                 // skip k frames, repeat action
                 for(int k = 0; k < args.skip; steps++, k++)
                     total_reward += ale.act(action);
