@@ -2,6 +2,9 @@
 
 Q-Learning Space Invaders using the [Arcade Learning Environment (ALE)](https://ale.farama.org/)
 
+The following papers were used as reference for the implementation:
+- Multi-agent reinforcement learning: independent versus cooperative agents [link](https://dl.acm.org/doi/10.5555/3091529.3091572)
+
 ## State Space
 The state space consists of the laser cannon's X coordinate, a total of
 160 potential values, reduced to a range of 38 to 120, for the game
