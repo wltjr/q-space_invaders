@@ -54,3 +54,15 @@ The primary executable is `qsi` multi-agent hedonic simulation environment.
 The program is implemented using GNU Argp, and has available `--help` menu for
 information on the arguments that each program accepts, which are required and
 are optional.
+
+## Credits
+
+Credits and thanks for resources referenced and used in this repository,
+including some code and/or project structure, go to the following:
+
+- [Introducing Q-Learning](https://huggingface.co/learn/deep-rl-course/unit2/q-learning)
+- [Mastering Atari Games with Q-Learning](https://medium.com/aimonks/mastering-atari-games-with-q-learning-c222800c7cb3)
+- [Approximate Q-Learning With Atari Game: A first Approach To Reinforcement Learning](https://medium.com/@olatejuemmanuel/approximate-q-learning-with-atari-game-a-first-approach-to-reinforcement-learning-da78162ae205)
+- [Space Invaders challenge: a Reinforcement Learning competition](https://wandb.ai/raghmura/qualcomm/reports/Space-Invaders-challenge-a-Reinforcement-Learning-competition--Vmlldzo5MzEzMg)
+- [Object Detection in 2D Video Games Using the cv2 Match Function in Python](https://medium.com/@viem2377/object-detection-in-2d-video-games-using-the-cv2-match-function-in-python-ee8908fb8c53)
+- [Template Matching in OpenCV](https://docs.opencv.org/4.x/d4/dc6/tutorial_py_template_matching.html)
