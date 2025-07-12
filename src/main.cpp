@@ -318,9 +318,9 @@ void train(args &args,
             int cannon_x;
             int next_x;
             float alpha;
+            float reward;
             double max_value;
             double min_value;
-            ale::reward_t reward;
             std::vector<unsigned char> screen;
             std::vector<float>::iterator max;
             ale::Action action;
@@ -366,13 +366,13 @@ void train(args &args,
             // take action & collect reward
             action = col_to_action(a);
             reward = ale.act(action);
-            total_reward += reward;
+            total_reward += static_cast<int64_t>(reward);
 
             if(args.train)
             {
-                // normalize reward -1, 0, or 1
+                 // reward -10, -1, 0, or 1/1000
                 if(reward > 0)
-                    reward = 1;
+                    reward /= 1000;
 
                 // skip k frames, repeat action
                 for(int k = 0; k < args.skip; steps++, k++)
