@@ -290,13 +290,18 @@ void train(args &args,
     for(int i = 0; i < args.episodes ;i++)
     {
         ale::reward_t total_reward;
+        int ai;
         int steps;
         int lives;
         int lives_game;
+        int random;
 
+
+        ai = 0;
         lives = args.lives;
         lives_game = ale.lives();
         steps = 0;
+        random = 0;
         total_reward = 0;
 
         if(args.train)
@@ -351,7 +356,12 @@ void train(args &args,
             // random action if empty q-table or training
             if((a == 0 && q_table[cannon_x][0] == 0) ||
                (args.train && rand_epsilon(gen) < args.epsilon))
+            {
                 a = rand_action(gen);
+                random++;
+            }
+            else
+                ai++;
 
             // take action & collect reward
             action = col_to_action(a);
@@ -411,9 +421,13 @@ void train(args &args,
         if(args.png)
             ale.saveScreenPNG(std::format("episode-{}.png", i));
 
-        std::cout << std::format("Episode {} score: {} steps: {} epsilon: {}",
-                                 i, total_reward, steps, args.epsilon)
-                  << std::endl;
+        std::cout << std::format("Episode {} score: {} steps: {}",
+                                 i, total_reward, steps);
+        // output only when training
+        if(args.train)
+            std::cout << std::format(" ai: {} random: {} epsilon: {}",
+                                     ai, random, args.epsilon);
+        std::cout << std::endl;
         ale.reset_game();
     }
 
