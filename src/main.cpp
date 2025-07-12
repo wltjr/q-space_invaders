@@ -24,6 +24,7 @@
 #define EPSILON 1.0              // exploration rate (starting value)
 #define EPSILON_MIN 0.1          // minimum exploration rate
 #define EPSILON_DECAY 0.999999   // decay rate for exploration
+#define LIVES 3                  // default lives
 
 const char *argp_program_version = "Version 0.1";
 const char *argp_program_bug_address = "w@wltjr.com";
@@ -51,6 +52,7 @@ struct args
     bool sound = false;
     bool train = false;
     int episodes = EPISODES;
+    int lives = LIVES;
     int noop = NOOP;
     int skip = SKIP;
     float alpha = ALPHA;
@@ -79,6 +81,7 @@ static struct argp_option options[] = {
     {"epsilon",'E',STRINGIFY(EPSILON),0," Epsilon exploration rate (starting value)",2},
     {"min",'M',STRINGIFY(EPSILON_MIN),0," Minimum exploration rate",2},
     {"decay",'D',STRINGIFY(EPSILON_DECAY),0," Decay rate for exploration",2},
+    {"lives",'L',STRINGIFY(LIVES),0," Lives up to game max of 3",2},
     {"noop",'N',STRINGIFY(NOOP),0," Skip initial frames using noop action",2},
     {"skip",'S',STRINGIFY(SKIP),0," Skip frames and repeat actions",2},
     {0,0,0,0,"GNU Options:", 3},
@@ -133,6 +136,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
             break;
         case 'E':
             args->epsilon = arg ? atof (arg) : EPSILON;
+            break;
+        case 'L':
+            args->lives = arg ? atoi (arg) : LIVES;
             break;
         case 'M':
             args->epsilon_min = arg ? atof (arg) : EPSILON_MIN;
@@ -274,6 +280,10 @@ void train(args &args,
     // load opencv template image
     cv::cvtColor(cv::imread("templates/cannon.png"), cannon, cv::COLOR_RGB2GRAY);
 
+    // limit max lives to game limit
+    if(args.lives > ale.lives())
+        args.lives = ale.lives();
+
     max_episode = -1;
     max_score = -1;
 
@@ -282,8 +292,10 @@ void train(args &args,
         ale::reward_t total_reward;
         int steps;
         int lives;
+        int lives_game;
 
-        lives = ale.lives();
+        lives = args.lives;
+        lives_game = ale.lives();
         steps = 0;
         total_reward = 0;
 
@@ -294,7 +306,7 @@ void train(args &args,
                 ale.act(ale::Action::PLAYER_A_NOOP);
         }
 
-        for(; !ale.game_over(); steps++)
+        for(; !ale.game_over() && lives > 0; steps++)
         {
             int a;
             int next_a;
@@ -357,10 +369,11 @@ void train(args &args,
                     total_reward += ale.act(action);
 
                 // penalty for dying
-                if(ale.lives() < lives)
+                if(lives_game > ale.lives())
                 {
                     reward = -10;
-                    lives = ale.lives();
+                    lives--;
+                    lives_game--;
                 }
                 // penalty for noop
                 else if(a == 0)
@@ -447,6 +460,7 @@ int main(int argc, char* argv[])
     if(args.train)
     {
         std::cout << "Training Parameters:" << std::endl
+                  << "Lives:         " << args.lives << std::endl
                   << "Episodes:      " << args.episodes << std::endl
                   << "Alpha:         " << args.alpha << std::endl
                   << "Gamma:         " << args.gamma << std::endl
