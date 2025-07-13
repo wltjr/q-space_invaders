@@ -267,6 +267,7 @@ void train(args &args,
 {
     int max_episode;
     ale::reward_t max_score;
+    int total_steps;
     cv::Mat cannon;
 
     // initialize random device
@@ -286,6 +287,7 @@ void train(args &args,
 
     max_episode = -1;
     max_score = -1;
+    total_steps = 0;
 
     for(int i = 0; i < args.episodes ;i++)
     {
@@ -311,7 +313,10 @@ void train(args &args,
                 ale.act(ale::Action::PLAYER_A_NOOP);
         }
 
-        for(; !ale.game_over() && lives > 0; steps++)
+        // update total steps
+        total_steps += steps;
+
+        for(; !ale.game_over() && lives > 0; steps++, total_steps++)
         {
             int a;
             int next_a;
@@ -375,7 +380,7 @@ void train(args &args,
                     reward /= 1000;
 
                 // skip k frames, repeat action
-                for(int k = 0; k < args.skip; steps++, k++)
+                for(int k = 0; k < args.skip; k++, steps++, total_steps++)
                     total_reward += ale.act(action);
 
                 // penalty for dying
@@ -435,8 +440,11 @@ void train(args &args,
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
 
     std::cout << std::endl
-              << std::format("Elapsed Time: {}s - Episode {} Max Score: {}",
-                             duration.count(), max_episode, max_score)
+              << std::format("Elapsed Time: {}s ", duration.count());
+    // output only when training
+    if(args.train)
+        std::cout << std::format("Total Steps: {} ", total_steps);
+    std::cout << std::format("- Episode {} Max Score: {}", max_episode, max_score)
               << std::endl;
 }
 
