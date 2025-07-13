@@ -23,7 +23,7 @@
 #define GAMMA 0.99               // discount factor
 #define EPSILON 1.0              // exploration rate (starting value)
 #define EPSILON_MIN 0.1          // minimum exploration rate
-#define EPSILON_DECAY 0.999999   // decay rate for exploration
+#define EPSILON_DECAY 0.99999    // decay rate for exploration
 #define LIVES 3                  // default lives
 
 const char *argp_program_version = "Version 0.1";
