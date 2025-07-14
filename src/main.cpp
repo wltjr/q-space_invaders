@@ -481,7 +481,7 @@ int main(int argc, char* argv[])
         load_q_table(args.load_file, q_table);
 
     // allocate q-table if empty
-    if(q_table.size() == 0)
+    if(q_table.empty())
         q_table.resize(WIDTH, std::vector<float>(ACTIONS, 0));
 
     // must load or train
