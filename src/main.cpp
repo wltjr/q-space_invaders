@@ -355,7 +355,7 @@ void train(args &args,
                 cannon_x = RIGHT;
 
             // default action to max from q-table
-            max = std::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
+            max = std::ranges::max_element(q_table[cannon_x].begin(), q_table[cannon_x].end());
             a = std::distance(q_table[cannon_x].begin(), max);
 
             // random action if empty q-table or training
@@ -403,7 +403,7 @@ void train(args &args,
                     next_x--;
 
                 // update q-value
-                max = std::max_element(q_table[next_x].begin(), q_table[next_x].end());
+                max = std::ranges::max_element(q_table[next_x].begin(), q_table[next_x].end());
                 next_a = std::distance(q_table[next_x].begin(), max);
                 alpha = args.alpha / (1 + i * args.gamma);
                 q_table[cannon_x][a] = (1 - alpha) * q_table[cannon_x][a] + alpha *
