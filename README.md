@@ -1,4 +1,6 @@
 # Q-Space Invaders
+[![License](http://img.shields.io/badge/license-MIT-blue.svg?colorB=9977bb&style=plastic)](https://github.com/wltjr/q-space_invaders/blob/master/LICENSE)
+[![Code Quality](https://sonarcloud.io/api/project_badges/measure?project=wltjr_q-space_invaders&metric=alert_status)](https://sonarcloud.io/dashboard?id=wltjr_q-space_invaders)
 
 Q-Learning Space Invaders using the [Arcade Learning Environment (ALE)](https://ale.farama.org/)
 
