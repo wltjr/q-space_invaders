@@ -99,7 +99,7 @@ static struct argp_option options[] = {
  */
 static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 
-    struct args *args = (struct args*)state->input;
+    auto args = (struct args*)state->input;
 
     switch(key) {
         case 'a':
