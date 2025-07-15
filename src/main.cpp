@@ -168,7 +168,7 @@ static struct argp argp	 =  { options, parse_opt };
  * @param filename the file name of the csv file with q-table
  * @param q_table un-allocated q-table
  */
-void load_q_table(std::string filename, 
+void load_q_table(std::string &filename,
                   std::vector<std::vector<float>> &q_table)
 {
     std::ifstream file;
@@ -206,7 +206,7 @@ void load_q_table(std::string filename,
  * @param filename the file name of the csv file to save q-table
  * @param q_table q-table of actions for each cannon_x value
  */
-void save_q_table(std::string filename, 
+void save_q_table(std::string &filename,
                   std::vector<std::vector<float>> &q_table)
 {
     std::ofstream file;
