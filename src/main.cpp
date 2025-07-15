@@ -15,6 +15,7 @@
 #define STRINGIFY2(x) #x
 
 // default values
+#define CSV_FILE "space_invaders_q_table.csv"
 #define EPISODES 10
 #define NOOP 30
 #define SKIP 2
@@ -28,8 +29,6 @@
 
 const char *argp_program_version = "Version 0.1";
 const char *argp_program_bug_address = "w@wltjr.com";
-
-const char *CSV_FILE = "space_invaders_q_table.csv";
 
 const int ACTIONS = 6;
 const int HEIGHT = 210;
