@@ -272,7 +272,7 @@ void train(args &args,
     // initialize random device
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> rand_action(0, ACTIONS-1);
+    std::uniform_int_distribution<> rand_action(0, ACTIONS-1);
     std::uniform_real_distribution<> rand_epsilon(0.0, args.epsilon);
 
     auto start = std::chrono::high_resolution_clock::now();
@@ -464,7 +464,7 @@ int main(int argc, char* argv[])
     // random seed
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> rand_seed(100, 1000);
+    std::uniform_int_distribution<> rand_seed(100, 1000);
 
     // initialize Arcade Learning Environment
     ale::ALEInterface ale;
