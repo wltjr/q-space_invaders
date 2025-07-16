@@ -429,7 +429,7 @@ void train(args &args,
                                  i, total_reward, steps);
         // output only when training
         if(args.train)
-            std::cout << std::format(" ai: {:>4} random: {:>4} epsilon: {:0.7f}",
+            std::cout << std::format(" ai: {:>4} random: {:>4} epsilon: {:>0.7f}",
                                      ai, random, args.epsilon);
         std::cout << std::endl;
         ale.reset_game();
